@@ -10,46 +10,46 @@ namespace ZooApp.Models
         private string _name = string.Empty;
         private DateTime _birthDate = DateTime.Now.AddYears(-1);
 
-        [Required(ErrorMessage = "Species is required")]
+        [Required(ErrorMessage = "Вид тварини є обов'язковим")]
         [StringLength(100, MinimumLength = 2,
-            ErrorMessage = "Species: 2 to 100 characters")]
+            ErrorMessage = "Вид: від 2 до 100 символів")]
         public string Species
         {
             get => _species;
             set
             {
                 if (string.IsNullOrWhiteSpace(value))
-                    throw new ArgumentException("Species cannot be empty.");
+                    throw new ArgumentException("Назва виду не може бути порожньою.");
                 if (value.Trim().Length < 2)
-                    throw new ArgumentException("Species: minimum 2 characters.");
+                    throw new ArgumentException("Вид: мінімум 2 символи.");
                 _species = value.Trim();
             }
         }
 
-        [Required(ErrorMessage = "Country of origin is required")]
+        [Required(ErrorMessage = "Країна походження є обов'язковою")]
         [StringLength(100, MinimumLength = 2,
-            ErrorMessage = "Country of origin: 2 to 100 characters")]
+            ErrorMessage = "Країна походження: від 2 до 100 символів")]
         public string CountryOfOrigin
         {
             get => _countryOfOrigin;
             set
             {
                 if (string.IsNullOrWhiteSpace(value))
-                    throw new ArgumentException("Country of origin cannot be empty.");
+                    throw new ArgumentException("Країна походження не може бути порожньою.");
                 _countryOfOrigin = value.Trim();
             }
         }
 
-        [Required(ErrorMessage = "Name is required")]
+        [Required(ErrorMessage = "Кличка є обов'язковою")]
         [StringLength(50, MinimumLength = 1,
-            ErrorMessage = "Name: 1 to 50 characters")]
+            ErrorMessage = "Кличка: від 1 до 50 символів")]
         public string Name
         {
             get => _name;
             set
             {
                 if (string.IsNullOrWhiteSpace(value))
-                    throw new ArgumentException("Animal name cannot be empty.");
+                    throw new ArgumentException("Кличка тварини не може бути порожньою.");
                 _name = value.Trim();
             }
         }
@@ -60,9 +60,9 @@ namespace ZooApp.Models
             set
             {
                 if (value > DateTime.Now)
-                    throw new ArgumentException("Birth date cannot be in the future.");
+                    throw new ArgumentException("Дата народження не може бути у майбутньому.");
                 if (value < new DateTime(1900, 1, 1))
-                    throw new ArgumentException("Birth date is invalid (before 1900).");
+                    throw new ArgumentException("Дата народження некоректна (раніше 1900 року).");
                 _birthDate = value;
             }
         }
@@ -79,9 +79,9 @@ namespace ZooApp.Models
         }
 
         public override string ToString() =>
-            $"Species: {Species}, Name: {Name}, " +
-            $"Country: {CountryOfOrigin}, " +
-            $"Birth date: {BirthDate:dd.MM.yyyy}";
+            $"Вид: {Species}, Кличка: {Name}, " +
+            $"Країна: {CountryOfOrigin}, " +
+            $"Дата народження: {BirthDate:dd.MM.yyyy}";
 
         public string ToShortString() => $"{Name} ({Species})";
     }
