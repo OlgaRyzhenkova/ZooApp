@@ -1,12 +1,171 @@
-﻿<Window x:Class="ZooApp.MainWindow"
+﻿<Window x:Class="ZooApp.Views.MainWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:local="clr-namespace:ZooApp"
-        mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="800">
-    <Grid>
+        Title="Зоопарк — Управління приміщеннями"
+        Height="700" Width="960"
+        MinHeight="600" MinWidth="800"
+        WindowStartupLocation="CenterScreen"
+        Background="#F5F5F5"
+        Closing="Window_Closing">
 
-    </Grid>
+    <Window.Resources>
+        <Style TargetType="GroupBox">
+            <Setter Property="BorderBrush" Value="#BDBDBD"/>
+            <Setter Property="Margin"      Value="0,0,0,8"/>
+            <Setter Property="Padding"     Value="10"/>
+            <Setter Property="HeaderTemplate">
+                <Setter.Value>
+                    <DataTemplate>
+                        <TextBlock Text="{Binding}" FontWeight="Bold"
+                                   Foreground="#1565C0" FontSize="13"/>
+                    </DataTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+    </Window.Resources>
+
+    <DockPanel>
+
+        <Menu DockPanel.Dock="Top" Background="#1565C0"
+              Foreground="White" Padding="4,2">
+            <MenuItem Header="Файл" Foreground="White">
+                <MenuItem Header="💾  Зберегти"  Click="MenuSave_Click"/>
+                <Separator/>
+                <MenuItem Header="🚪  Вихід"  Click="MenuExit_Click"/>
+            </MenuItem>
+            <MenuItem Header="Про програму" Foreground="White"
+                      Click="MenuAbout_Click"/>
+        </Menu>
+
+        <Border DockPanel.Dock="Top" Background="#1565C0" Padding="16,10">
+            <TextBlock Text="🏠  Зоопарк — Управління приміщеннями"
+                       Foreground="White" FontSize="18" FontWeight="Bold"/>
+        </Border>
+
+        <Border DockPanel.Dock="Bottom" Background="#ECEFF1"
+                BorderBrush="#BDBDBD" BorderThickness="0,1,0,0" Padding="12,8">
+            <StackPanel>
+                <TextBlock x:Name="ShortInfoText"
+                           FontStyle="Italic" Foreground="#37474F"
+                           FontSize="12" TextWrapping="Wrap" Text="Готово"/>
+                <TextBlock x:Name="SavePathText"
+                           FontSize="10" Foreground="#90A4AE" Margin="0,4,0,0"/>
+            </StackPanel>
+        </Border>
+
+        <ScrollViewer VerticalScrollBarVisibility="Auto">
+            <StackPanel Margin="16">
+
+                <GroupBox Header="Інформація про приміщення">
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+
+                        <StackPanel Grid.Column="0" Margin="0,0,8,0">
+                            <TextBlock Text="Тип приміщення"
+                                       Style="{StaticResource FieldLabel}"/>
+                            <ComboBox x:Name="RoomTypeCombo" Height="30"
+                                      SelectionChanged="RoomTypeCombo_SelectionChanged"/>
+                        </StackPanel>
+
+                        <StackPanel Grid.Column="1" Margin="4,0">
+                            <TextBlock Text="Номер"
+                                       Style="{StaticResource FieldLabel}"/>
+                            <TextBox Style="{StaticResource ValidatedTextBox}"
+                                     Text="{Binding Number,
+                                            ValidatesOnDataErrors=True,
+                                            ValidatesOnExceptions=True,
+                                            UpdateSourceTrigger=PropertyChanged}"
+                                     LostFocus="RoomField_LostFocus"/>
+                        </StackPanel>
+
+                        <StackPanel Grid.Column="2" Margin="4,0">
+                            <TextBlock Text="Площа (м²)"
+                                       Style="{StaticResource FieldLabel}"/>
+                            <TextBox Style="{StaticResource ValidatedTextBox}"
+                                     Text="{Binding Size,
+                                            ValidatesOnDataErrors=True,
+                                            ValidatesOnExceptions=True,
+                                            UpdateSourceTrigger=PropertyChanged}"
+                                     LostFocus="RoomField_LostFocus"/>
+                        </StackPanel>
+
+                        <StackPanel Grid.Column="3" Margin="8,0,0,0">
+                            <TextBlock Text="Вартість прибирання (грн)"
+                                       Style="{StaticResource FieldLabel}"/>
+                            <TextBox Style="{StaticResource ValidatedTextBox}"
+                                     Text="{Binding CleaningCost,
+                                            ValidatesOnDataErrors=True,
+                                            ValidatesOnExceptions=True,
+                                            UpdateSourceTrigger=PropertyChanged}"
+                                     LostFocus="RoomField_LostFocus"/>
+                        </StackPanel>
+                    </Grid>
+                </GroupBox>
+
+                <GroupBox Header="Тварини у приміщенні">
+                    <DockPanel>
+
+                        <StackPanel DockPanel.Dock="Bottom"
+                                    Orientation="Horizontal" Margin="0,10,0,0">
+                            <Button x:Name="AddBtn"
+                                    Content="➕  Додати"
+                                    Style="{StaticResource PrimaryButton}"
+                                    Margin="0,0,8,0" MinWidth="120"
+                                    Click="AddBtn_Click"/>
+                            <Button x:Name="EditBtn"
+                                    Content="✏️  Редагувати"
+                                    Style="{StaticResource PrimaryButton}"
+                                    Margin="0,0,8,0" MinWidth="120"
+                                    IsEnabled="False"
+                                    Click="EditBtn_Click"/>
+                            <Button x:Name="DeleteBtn"
+                                    Content="🗑  Видалити"
+                                    Style="{StaticResource DangerButton}"
+                                    MinWidth="120"
+                                    IsEnabled="False"
+                                    Click="DeleteBtn_Click"/>
+                        </StackPanel>
+
+                        <DataGrid x:Name="AnimalsGrid"
+                                  AutoGenerateColumns="False"
+                                  CanUserAddRows="False"
+                                  CanUserDeleteRows="False"
+                                  IsReadOnly="True"
+                                  SelectionMode="Single"
+                                  MinHeight="200"
+                                  GridLinesVisibility="Horizontal"
+                                  HorizontalGridLinesBrush="#E0E0E0"
+                                  AlternatingRowBackground="#FAFAFA"
+                                  RowHeight="32" FontSize="13"
+                                  SelectionChanged="AnimalsGrid_SelectionChanged">
+                            <DataGrid.Columns>
+                                <DataGridTextColumn Header="Кличка"
+                                    Binding="{Binding Animal.Name}"    Width="*"/>
+                                <DataGridTextColumn Header="Вид"
+                                    Binding="{Binding Animal.Species}" Width="*"/>
+                                <DataGridTextColumn Header="Країна"
+                                    Binding="{Binding Animal.CountryOfOrigin}" Width="*"/>
+                                <DataGridTextColumn Header="Дата нар."
+                                    Binding="{Binding Animal.BirthDate,
+                                              StringFormat=dd.MM.yyyy}" Width="100"/>
+                                <DataGridTextColumn Header="Дата приб."
+                                    Binding="{Binding ArrivalDate,
+                                              StringFormat=dd.MM.yyyy}" Width="100"/>
+                                <DataGridTextColumn Header="Утримання (грн)"
+                                    Binding="{Binding KeepingCost,
+                                              StringFormat={}{0} грн}" Width="130"/>
+                            </DataGrid.Columns>
+                        </DataGrid>
+
+                    </DockPanel>
+                </GroupBox>
+
+            </StackPanel>
+        </ScrollViewer>
+    </DockPanel>
 </Window>
