@@ -2,9 +2,9 @@
 {
     public enum RoomType
     {
-        Cage,
-        Aviary,
-        Aquarium,
-        Terrarium
+        Клітка,
+        Вольєр,
+        Акваріум,
+        Тераріум
     }
 }

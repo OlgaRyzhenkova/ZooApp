@@ -19,19 +19,19 @@ namespace ZooApp.Serialization
             TypeNameHandling = TypeNameHandling.None
         };
 
-        public static void Save(RoomDTO dto)
+        public static void Save(ZooDTO dto)
         {
             var json = JsonConvert.SerializeObject(dto, Settings);
             File.WriteAllText(SavePath, json);
         }
 
-        public static RoomDTO? Load()
+        public static ZooDTO? Load()
         {
             if (!File.Exists(SavePath)) return null;
             try
             {
                 var json = File.ReadAllText(SavePath);
-                return JsonConvert.DeserializeObject<RoomDTO>(json, Settings);
+                return JsonConvert.DeserializeObject<ZooDTO>(json, Settings);
             }
             catch { return null; }
         }

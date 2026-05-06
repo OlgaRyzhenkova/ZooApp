@@ -1,12 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
+﻿using System.Collections.ObjectModel;
 using System.ComponentModel;
-using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Input;
 using ZooApp.DTOs;
-using ZooApp.Enums;
 using ZooApp.Models;
 using ZooApp.Serialization;
 
@@ -14,139 +11,99 @@ namespace ZooApp.Views
 {
     public partial class MainWindow : Window
     {
-        private Room _room = new(RoomType.Cage, 1, 50, 200);
-        private RoomDTO _roomDto = new();
-        private ObservableCollection<AccountingUnit> _animals = new();
+        private Zoo _zoo = new("Зоопарк");
+        private ObservableCollection<Room> _rooms = new();
 
         public MainWindow()
         {
             InitializeComponent();
-            InitComboBox();
             TryLoadData();
-            DataContext = _roomDto;
-            RoomTypeCombo.SelectedItem = _roomDto.RoomType;
-            AnimalsGrid.ItemsSource = _animals;
-            UpdateShortInfo();
+            RoomsGrid.ItemsSource = _rooms;
+            UpdateStats();
             SavePathText.Text = $"Файл збереження: {DataManager.SaveFilePath}";
         }
-
-        private void InitComboBox() =>
-            RoomTypeCombo.ItemsSource = System.Enum.GetValues(typeof(RoomType));
 
         private void TryLoadData()
         {
             var loaded = DataManager.Load();
-            if (loaded == null) { _roomDto = RoomDTO.FromModel(_room); return; }
+            if (loaded == null) return;
             try
             {
-                _room = loaded.ToModel();
-                _animals.Clear();
-                foreach (var unit in _room.Animals)
-                    _animals.Add(unit);
-                _roomDto = RoomDTO.FromModel(_room);
+                _zoo = loaded.ToModel();
+                _rooms.Clear();
+                foreach (var room in _zoo.Rooms)
+                    _rooms.Add(room);
             }
-            catch { _roomDto = RoomDTO.FromModel(_room); }
+            catch { }
         }
 
-        private void RoomTypeCombo_SelectionChanged(
+        // ── Таблиця приміщень ─────────────────────────────────────────────────
+
+        private void RoomsGrid_SelectionChanged(
             object sender, SelectionChangedEventArgs e)
         {
-            if (RoomTypeCombo.SelectedItem is RoomType rt)
+            bool sel = RoomsGrid.SelectedItem != null;
+            EditRoomBtn.IsEnabled = sel;
+            DeleteRoomBtn.IsEnabled = sel;
+        }
+
+        private void RoomsGrid_MouseDoubleClick(object sender, MouseButtonEventArgs e)
+        {
+            if (RoomsGrid.SelectedItem is Room) EditRoomBtn_Click(sender, e);
+        }
+
+        // ── Кнопки ───────────────────────────────────────────────────────────
+
+        private void AddRoomBtn_Click(object sender, RoutedEventArgs e)
+        {
+            var win = new RoomWindow(null) { Owner = this };
+            if (win.ShowDialog() == true && win.ResultRoom != null)
             {
-                _roomDto.RoomType = rt;
-                _room.RoomType = rt;
-                UpdateShortInfo();
+                _zoo.AddRoom(win.ResultRoom);
+                _rooms.Add(win.ResultRoom);
+                UpdateStats();
             }
         }
 
-        private void RoomField_LostFocus(object sender, RoutedEventArgs e)
+        private void EditRoomBtn_Click(object sender, RoutedEventArgs e)
         {
-            TryApplyRoomFields();
-            UpdateShortInfo();
-        }
-
-        private bool TryApplyRoomFields()
-        {
-            if (!_roomDto.IsValid())
-            {
-                MessageBox.Show(
-                    "Будь ласка, виправте помилки в даних приміщення:\n" +
-                    string.Join("\n", _roomDto.GetValidationErrors()),
-                    "Помилки валідації",
-                    MessageBoxButton.OK, MessageBoxImage.Warning);
-                return false;
-            }
-            try
-            {
-                _room.Number = _roomDto.Number;
-                _room.Size = _roomDto.Size;
-                _room.CleaningCost = _roomDto.CleaningCost;
-                _room.RoomType = _roomDto.RoomType;
-                return true;
-            }
-            catch (System.ArgumentException ex)
-            {
-                MessageBox.Show(ex.Message, "Помилка",
-                    MessageBoxButton.OK, MessageBoxImage.Warning);
-                return false;
-            }
-        }
-
-        private void AnimalsGrid_SelectionChanged(
-            object sender, SelectionChangedEventArgs e)
-        {
-            bool selected = AnimalsGrid.SelectedItem != null;
-            EditBtn.IsEnabled = selected;
-            DeleteBtn.IsEnabled = selected;
-        }
-
-        private void AddBtn_Click(object sender, RoutedEventArgs e)
-        {
-            var win = new AccountingUnitWindow(null) { Owner = this };
-            if (win.ShowDialog() == true && win.ResultUnit != null)
-            {
-                _room.AddAnimal(win.ResultUnit);
-                _animals.Add(win.ResultUnit);
-                UpdateShortInfo();
-            }
-        }
-
-        private void EditBtn_Click(object sender, RoutedEventArgs e)
-        {
-            if (AnimalsGrid.SelectedItem is not AccountingUnit selected) return;
-            var win = new AccountingUnitWindow(selected) { Owner = this };
+            if (RoomsGrid.SelectedItem is not Room selected) return;
+            var win = new RoomWindow(selected) { Owner = this };
             if (win.ShowDialog() == true)
             {
-                int idx = _animals.IndexOf(selected);
+                int idx = _rooms.IndexOf(selected);
                 if (idx >= 0)
                 {
-                    _animals.RemoveAt(idx);
-                    _animals.Insert(idx, selected);
-                    AnimalsGrid.SelectedIndex = idx;
+                    _rooms.RemoveAt(idx);
+                    _rooms.Insert(idx, selected);
+                    RoomsGrid.SelectedIndex = idx;
                 }
-                UpdateShortInfo();
+                UpdateStats();
             }
         }
 
-        private void DeleteBtn_Click(object sender, RoutedEventArgs e)
+        private void DeleteRoomBtn_Click(object sender, RoutedEventArgs e)
         {
-            if (AnimalsGrid.SelectedItem is not AccountingUnit selected) return;
+            if (RoomsGrid.SelectedItem is not Room selected) return;
             var res = MessageBox.Show(
-                $"Видалити \"{selected.Animal.ToShortString()}\" з приміщення?",
+                $"Видалити приміщення №{selected.Number} ({selected.DisplayType})?\n" +
+                $"Разом з ним буде видалено {selected.Animals.Count} тварин.",
                 "Підтвердження видалення",
                 MessageBoxButton.YesNo, MessageBoxImage.Question);
             if (res == MessageBoxResult.Yes)
             {
-                _room.RemoveAnimal(selected);
-                _animals.Remove(selected);
-                UpdateShortInfo();
+                _zoo.RemoveRoom(selected);
+                _rooms.Remove(selected);
+                UpdateStats();
             }
         }
+
+        // ── Меню ─────────────────────────────────────────────────────────────
 
         private void MenuSave_Click(object sender, RoutedEventArgs e)
         {
             SaveData();
-            MessageBox.Show("Дані успішно збережено.", "Збережено",
+            MessageBox.Show("Дані збережено успішно.", "Збережено",
                 MessageBoxButton.OK, MessageBoxImage.Information);
         }
 
@@ -155,23 +112,36 @@ namespace ZooApp.Views
         private void MenuAbout_Click(object sender, RoutedEventArgs e) =>
             MessageBox.Show(
                 "Зоопарк — Управління приміщеннями\n" +
-                "Лабораторна робота №4, Варіант 4\n\n" +
-                "Класи: Animal, AccountingUnit, Room\n" +
+                "Лабораторна робота №4-максі, Варіант 4\n\n" +
+                "Класи: Тварина → Одиниця обліку → Приміщення → Зоопарк\n" +
                 "Серіалізація: Newtonsoft.Json\n" +
-                "Валідація: IDataErrorInfo + Data Annotations + сетери",
+                "Валідація: IDataErrorInfo + Data Annotations + setters",
                 "Про програму",
                 MessageBoxButton.OK, MessageBoxImage.Information);
+
+        // ── Закриття — автозбереження ─────────────────────────────────────────
 
         private void Window_Closing(object sender, CancelEventArgs e) =>
             SaveData();
 
+        // ── Допоміжні ────────────────────────────────────────────────────────
+
         private void SaveData()
         {
-            TryApplyRoomFields();
-            DataManager.Save(RoomDTO.FromModel(_room));
+            // Синхронізуємо _zoo.Rooms з актуальною ObservableCollection
+            _zoo.Rooms.Clear();
+            foreach (var room in _rooms)
+                _zoo.Rooms.Add(room);
+
+            DataManager.Save(ZooDTO.FromModel(_zoo));
         }
 
-        private void UpdateShortInfo() =>
-            ShortInfoText.Text = _room.ToShortString();
+        private void UpdateStats()
+        {
+            ZooNameText.Text = _zoo.Name;
+            TotalRoomsText.Text = $"{_zoo.Rooms.Count} приміщень";
+            TotalAnimalsText.Text = $"{_zoo.TotalAnimals} тварин";
+            TotalCostText.Text = $"{_zoo.TotalKeepingCost} грн.";
+        }
     }
 }

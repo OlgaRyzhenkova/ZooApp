@@ -51,7 +51,7 @@ namespace ZooApp.Views
             if (date > DateTime.Now)
             {
                 MessageBox.Show(
-                    "Дата прибуття не може бути у майбутньому.",
+                    "Дата надходження не може бути в майбутньому.",
                     "Помилка", MessageBoxButton.OK, MessageBoxImage.Warning);
                 ArrivalDatePicker.SelectedDate = _dto.ArrivalDate;
                 return;
@@ -124,7 +124,8 @@ namespace ZooApp.Views
                 errors.AddRange(_dto.GetValidationErrors());
                 errors.AddRange(_dto.Animal.GetValidationErrors());
                 MessageBox.Show(
-                    "Будь ласка, виправте помилки:\n" + string.Join("\n", errors),
+                    "Будь ласка, виправте помилки:\n" +
+                    string.Join("\n", errors),
                     "Помилки валідації",
                     MessageBoxButton.OK, MessageBoxImage.Warning);
                 return false;

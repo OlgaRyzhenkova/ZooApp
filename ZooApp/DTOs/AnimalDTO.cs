@@ -11,16 +11,16 @@ namespace ZooApp.DTOs
         private string _name = string.Empty;
         private DateTime _birthDate = DateTime.Now.AddYears(-1);
 
-        [Required(ErrorMessage = "Вид тварини є обов'язковим")]
+        [Required(ErrorMessage = "Вид тварини обов'язковий")]
         [StringLength(100, MinimumLength = 2,
-            ErrorMessage = "Вид: від 2 до 100 символів")]
+            ErrorMessage = "Вид тварини: від 2 до 100 символів")]
         public string Species
         {
             get => _species;
             set => SetField(ref _species, value ?? string.Empty);
         }
 
-        [Required(ErrorMessage = "Країна походження є обов'язковою")]
+        [Required(ErrorMessage = "Країна походження обов'язкова")]
         [StringLength(100, MinimumLength = 2,
             ErrorMessage = "Країна походження: від 2 до 100 символів")]
         public string CountryOfOrigin
@@ -29,7 +29,7 @@ namespace ZooApp.DTOs
             set => SetField(ref _countryOfOrigin, value ?? string.Empty);
         }
 
-        [Required(ErrorMessage = "Кличка є обов'язковою")]
+        [Required(ErrorMessage = "Кличка тварини обов'язкова")]
         [StringLength(50, MinimumLength = 1,
             ErrorMessage = "Кличка: від 1 до 50 символів")]
         public string Name

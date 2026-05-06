@@ -10,23 +10,23 @@ namespace ZooApp.Models
         private string _name = string.Empty;
         private DateTime _birthDate = DateTime.Now.AddYears(-1);
 
-        [Required(ErrorMessage = "Вид тварини є обов'язковим")]
+        [Required(ErrorMessage = "Вид тварини обов'язковий")]
         [StringLength(100, MinimumLength = 2,
-            ErrorMessage = "Вид: від 2 до 100 символів")]
+            ErrorMessage = "Вид тварини: від 2 до 100 символів")]
         public string Species
         {
             get => _species;
             set
             {
                 if (string.IsNullOrWhiteSpace(value))
-                    throw new ArgumentException("Назва виду не може бути порожньою.");
+                    throw new ArgumentException("Вид тварини не може бути порожнім.");
                 if (value.Trim().Length < 2)
-                    throw new ArgumentException("Вид: мінімум 2 символи.");
+                    throw new ArgumentException("Вид тварини: мінімум 2 символи.");
                 _species = value.Trim();
             }
         }
 
-        [Required(ErrorMessage = "Країна походження є обов'язковою")]
+        [Required(ErrorMessage = "Країна походження обов'язкова")]
         [StringLength(100, MinimumLength = 2,
             ErrorMessage = "Країна походження: від 2 до 100 символів")]
         public string CountryOfOrigin
@@ -40,7 +40,7 @@ namespace ZooApp.Models
             }
         }
 
-        [Required(ErrorMessage = "Кличка є обов'язковою")]
+        [Required(ErrorMessage = "Кличка тварини обов'язкова")]
         [StringLength(50, MinimumLength = 1,
             ErrorMessage = "Кличка: від 1 до 50 символів")]
         public string Name
@@ -60,9 +60,10 @@ namespace ZooApp.Models
             set
             {
                 if (value > DateTime.Now)
-                    throw new ArgumentException("Дата народження не може бути у майбутньому.");
+                    throw new ArgumentException(
+                        "Дата народження не може бути в майбутньому.");
                 if (value < new DateTime(1900, 1, 1))
-                    throw new ArgumentException("Дата народження некоректна (раніше 1900 року).");
+                    throw new ArgumentException("Некоректна дата (до 1900 р.).");
                 _birthDate = value;
             }
         }

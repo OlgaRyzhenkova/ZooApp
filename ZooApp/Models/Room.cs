@@ -28,7 +28,7 @@ namespace ZooApp.Models
             set
             {
                 if (value <= 0)
-                    throw new ArgumentException("Номер приміщення має бути більшим за 0.");
+                    throw new ArgumentException("Номер приміщення повинен бути більше 0.");
                 if (value > 9_999)
                     throw new ArgumentException("Номер приміщення: максимум 9999.");
                 _number = value;
@@ -42,20 +42,21 @@ namespace ZooApp.Models
             set
             {
                 if (value <= 0)
-                    throw new ArgumentException("Площа приміщення має бути більшою за 0.");
+                    throw new ArgumentException("Площа приміщення повинна бути більше 0.");
                 _size = value;
             }
         }
 
         [Range(0, 1_000_000,
-            ErrorMessage = "Вартість прибирання: від 0 до 1 000 000 грн")]
+            ErrorMessage = "Вартість прибирання: від 0 до 1 000 000 грн.")]
         public int CleaningCost
         {
             get => _cleaningCost;
             set
             {
                 if (value < 0)
-                    throw new ArgumentException("Вартість прибирання не може бути від’ємною.");
+                    throw new ArgumentException(
+                        "Вартість прибирання не може бути від'ємною.");
                 _cleaningCost = value;
             }
         }
@@ -67,6 +68,16 @@ namespace ZooApp.Models
         }
 
         public int TotalKeepingCost => _animals.Sum(a => a.KeepingCost);
+
+        /// <summary>Тип приміщення з емоджі для відображення у таблиці.</summary>
+        public string DisplayType => _roomType switch
+        {
+            RoomType.Клітка => "🦁 Клітка",
+            RoomType.Вольєр => "🦅 Вольєр",
+            RoomType.Акваріум => "🐠 Акваріум",
+            RoomType.Тераріум => "🦎 Тераріум",
+            _ => _roomType.ToString()
+        };
 
         public Room() { }
 
@@ -89,18 +100,18 @@ namespace ZooApp.Models
         public override string ToString()
         {
             var sb = new StringBuilder();
-            sb.AppendLine($"Приміщення #{Number} ({RoomType})");
-            sb.AppendLine($"Площа: {Size} м², Вартість прибирання: {CleaningCost} грн");
+            sb.AppendLine($"Приміщення №{Number} ({DisplayType})");
+            sb.AppendLine($"Площа: {Size} м², Вартість прибирання: {CleaningCost} грн.");
             sb.AppendLine($"Кількість тварин: {_animals.Count}");
             foreach (var a in _animals)
                 sb.AppendLine($"  • {a.ToShortString()}");
-            sb.AppendLine($"Загальна вартість утримання: {TotalKeepingCost} грн");
+            sb.AppendLine($"Загальна вартість утримання: {TotalKeepingCost} грн.");
             return sb.ToString();
         }
 
         public string ToShortString() =>
-            $"Приміщення #{Number} ({RoomType}) | " +
+            $"Приміщення №{Number} ({DisplayType}) | " +
             $"Тварин: {_animals.Count} | " +
-            $"Загальна вартість: {TotalKeepingCost} грн";
+            $"Вартість утримання: {TotalKeepingCost} грн.";
     }
 }

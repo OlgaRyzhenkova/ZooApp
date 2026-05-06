@@ -4,78 +4,101 @@
              StartupUri="Views/MainWindow.xaml">
     <Application.Resources>
 
+        <!-- ══ Шаблон помилок валідації ══════════════════════════════════════ -->
         <ControlTemplate x:Key="ValidationErrorTemplate">
             <StackPanel>
-                <AdornedElementPlaceholder x:Name="placeholder"/>
-                <Border BorderBrush="#E53935" BorderThickness="1" Margin="0,-1,0,0">
+                <AdornedElementPlaceholder/>
+                <Border BorderBrush="#8B1A0A" BorderThickness="1" Margin="0,-1,0,0"
+                        CornerRadius="0,0,3,3">
                     <TextBlock Text="{Binding [0].ErrorContent}"
-                               Foreground="#E53935" FontSize="10"
-                               Padding="4,2" Background="#FFEBEE"/>
+                               Foreground="#8B1A0A" FontSize="10"
+                               Padding="6,2" Background="#FDF0EE"
+                               FontFamily="Segoe UI"/>
                 </Border>
             </StackPanel>
         </ControlTemplate>
 
+        <!-- ══ TextBox ════════════════════════════════════════════════════════ -->
         <Style x:Key="ValidatedTextBox" TargetType="TextBox">
-            <Setter Property="Padding"         Value="6,4"/>
-            <Setter Property="Height"          Value="30"/>
-            <Setter Property="BorderBrush"     Value="#BDBDBD"/>
-            <Setter Property="BorderThickness" Value="1"/>
-            <Setter Property="Background"      Value="White"/>
+            <Setter Property="Padding"          Value="8,5"/>
+            <Setter Property="Height"           Value="32"/>
+            <Setter Property="BorderBrush"      Value="#B8CFA4"/>
+            <Setter Property="BorderThickness"  Value="1"/>
+            <Setter Property="Background"       Value="#FEFCF7"/>
+            <Setter Property="FontFamily"       Value="Segoe UI"/>
+            <Setter Property="FontSize"         Value="13"/>
+            <Setter Property="Foreground"       Value="#2C1F0E"/>
             <Setter Property="Validation.ErrorTemplate"
                     Value="{StaticResource ValidationErrorTemplate}"/>
             <Style.Triggers>
                 <Trigger Property="Validation.HasError" Value="True">
-                    <Setter Property="BorderBrush" Value="#E53935"/>
-                    <Setter Property="Background"  Value="#FFEBEE"/>
+                    <Setter Property="BorderBrush" Value="#C0392B"/>
+                    <Setter Property="Background"  Value="#FDF0EE"/>
                     <Setter Property="ToolTip"
                             Value="{Binding RelativeSource={RelativeSource Self},
                                    Path=(Validation.Errors)[0].ErrorContent}"/>
                 </Trigger>
                 <Trigger Property="IsFocused" Value="True">
-                    <Setter Property="BorderBrush" Value="#1565C0"/>
+                    <Setter Property="BorderBrush" Value="#3D7A2E"/>
+                    <Setter Property="Background"  Value="#FFFFFF"/>
                 </Trigger>
             </Style.Triggers>
         </Style>
 
+        <!-- ══ DatePicker ════════════════════════════════════════════════════ -->
         <Style x:Key="ValidatedDatePicker" TargetType="DatePicker">
-            <Setter Property="Height" Value="30"/>
+            <Setter Property="Height"          Value="32"/>
+            <Setter Property="FontFamily"      Value="Segoe UI"/>
+            <Setter Property="FontSize"        Value="13"/>
+            <Setter Property="BorderBrush"     Value="#B8CFA4"/>
             <Setter Property="Validation.ErrorTemplate"
                     Value="{StaticResource ValidationErrorTemplate}"/>
             <Style.Triggers>
                 <Trigger Property="Validation.HasError" Value="True">
-                    <Setter Property="BorderBrush" Value="#E53935"/>
-                    <Setter Property="ToolTip"
-                            Value="{Binding RelativeSource={RelativeSource Self},
-                                   Path=(Validation.Errors)[0].ErrorContent}"/>
+                    <Setter Property="BorderBrush" Value="#C0392B"/>
                 </Trigger>
             </Style.Triggers>
         </Style>
 
+        <!-- ══ ComboBox ══════════════════════════════════════════════════════ -->
+        <Style x:Key="ZooComboBox" TargetType="ComboBox">
+            <Setter Property="Height"      Value="32"/>
+            <Setter Property="FontFamily"  Value="Segoe UI"/>
+            <Setter Property="FontSize"    Value="13"/>
+            <Setter Property="Foreground"  Value="#2C1F0E"/>
+            <Setter Property="Background"  Value="#FEFCF7"/>
+            <Setter Property="BorderBrush" Value="#B8CFA4"/>
+        </Style>
+
+        <!-- ══ Основна кнопка (зелена) ═══════════════════════════════════════ -->
         <Style x:Key="PrimaryButton" TargetType="Button">
-            <Setter Property="Background"      Value="#1565C0"/>
-            <Setter Property="Foreground"      Value="White"/>
-            <Setter Property="Padding"         Value="16,8"/>
+            <Setter Property="Background"     Value="#2D5A1B"/>
+            <Setter Property="Foreground"     Value="#F5F0E8"/>
+            <Setter Property="Padding"        Value="16,8"/>
             <Setter Property="BorderThickness" Value="0"/>
-            <Setter Property="Cursor"          Value="Hand"/>
-            <Setter Property="FontWeight"      Value="SemiBold"/>
+            <Setter Property="Cursor"         Value="Hand"/>
+            <Setter Property="FontWeight"     Value="SemiBold"/>
+            <Setter Property="FontFamily"     Value="Segoe UI"/>
+            <Setter Property="FontSize"       Value="13"/>
             <Setter Property="Template">
                 <Setter.Value>
                     <ControlTemplate TargetType="Button">
                         <Border Background="{TemplateBinding Background}"
-                                CornerRadius="4"
+                                CornerRadius="5"
                                 Padding="{TemplateBinding Padding}">
                             <ContentPresenter HorizontalAlignment="Center"
                                               VerticalAlignment="Center"/>
                         </Border>
                         <ControlTemplate.Triggers>
                             <Trigger Property="IsMouseOver" Value="True">
-                                <Setter Property="Background" Value="#1976D2"/>
+                                <Setter Property="Background" Value="#3D7A2E"/>
                             </Trigger>
                             <Trigger Property="IsPressed" Value="True">
-                                <Setter Property="Background" Value="#0D47A1"/>
+                                <Setter Property="Background" Value="#1A3D0F"/>
                             </Trigger>
                             <Trigger Property="IsEnabled" Value="False">
-                                <Setter Property="Background" Value="#90CAF9"/>
+                                <Setter Property="Background" Value="#A8C88A"/>
+                                <Setter Property="Foreground"  Value="#6B8F56"/>
                             </Trigger>
                         </ControlTemplate.Triggers>
                     </ControlTemplate>
@@ -83,34 +106,83 @@
             </Setter>
         </Style>
 
-        <Style x:Key="DangerButton" TargetType="Button"
+        <!-- ══ Кнопка редагування (бурштинова) ══════════════════════════════ -->
+        <Style x:Key="EditButton" TargetType="Button"
                BasedOn="{StaticResource PrimaryButton}">
-            <Setter Property="Background" Value="#C62828"/>
+            <Setter Property="Background" Value="#B87A1A"/>
             <Style.Triggers>
                 <Trigger Property="IsMouseOver" Value="True">
-                    <Setter Property="Background" Value="#D32F2F"/>
+                    <Setter Property="Background" Value="#D4943B"/>
+                </Trigger>
+                <Trigger Property="IsPressed" Value="True">
+                    <Setter Property="Background" Value="#8A5C10"/>
                 </Trigger>
                 <Trigger Property="IsEnabled" Value="False">
-                    <Setter Property="Background" Value="#FFCDD2"/>
-                    <Setter Property="Foreground"  Value="#9E9E9E"/>
+                    <Setter Property="Background" Value="#E8CFA0"/>
+                    <Setter Property="Foreground"  Value="#9E7A3A"/>
                 </Trigger>
             </Style.Triggers>
         </Style>
 
-        <Style x:Key="SecondaryButton" TargetType="Button"
+        <!-- ══ Кнопка видалення (темно-червона) ══════════════════════════════ -->
+        <Style x:Key="DangerButton" TargetType="Button"
                BasedOn="{StaticResource PrimaryButton}">
-            <Setter Property="Background" Value="#546E7A"/>
+            <Setter Property="Background" Value="#8B1A0A"/>
             <Style.Triggers>
                 <Trigger Property="IsMouseOver" Value="True">
-                    <Setter Property="Background" Value="#607D8B"/>
+                    <Setter Property="Background" Value="#B02215"/>
+                </Trigger>
+                <Trigger Property="IsPressed" Value="True">
+                    <Setter Property="Background" Value="#5C0F04"/>
+                </Trigger>
+                <Trigger Property="IsEnabled" Value="False">
+                    <Setter Property="Background" Value="#DFA8A0"/>
+                    <Setter Property="Foreground"  Value="#9E5A50"/>
                 </Trigger>
             </Style.Triggers>
         </Style>
 
+        <!-- ══ Кнопка скасування (земляно-коричнева) ═════════════════════════ -->
+        <Style x:Key="SecondaryButton" TargetType="Button"
+               BasedOn="{StaticResource PrimaryButton}">
+            <Setter Property="Background" Value="#6B4C2A"/>
+            <Style.Triggers>
+                <Trigger Property="IsMouseOver" Value="True">
+                    <Setter Property="Background" Value="#8A6340"/>
+                </Trigger>
+                <Trigger Property="IsPressed" Value="True">
+                    <Setter Property="Background" Value="#4A3018"/>
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+
+        <!-- ══ Підпис поля ════════════════════════════════════════════════════ -->
         <Style x:Key="FieldLabel" TargetType="TextBlock">
-            <Setter Property="FontSize"   Value="12"/>
-            <Setter Property="Foreground" Value="#555"/>
-            <Setter Property="Margin"     Value="0,0,0,2"/>
+            <Setter Property="FontSize"   Value="11"/>
+            <Setter Property="FontFamily" Value="Segoe UI"/>
+            <Setter Property="Foreground" Value="#5A4020"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
+            <Setter Property="Margin"     Value="0,0,0,3"/>
+        </Style>
+
+        <!-- ══ Стиль GroupBox ════════════════════════════════════════════════ -->
+        <Style TargetType="GroupBox">
+            <Setter Property="BorderBrush"  Value="#8FBF6E"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="Margin"       Value="0,0,0,10"/>
+            <Setter Property="Padding"      Value="10,8"/>
+            <Setter Property="Background"   Value="#FAFDF6"/>
+            <Setter Property="HeaderTemplate">
+                <Setter.Value>
+                    <DataTemplate>
+                        <TextBlock Text="{Binding}"
+                                   FontWeight="Bold"
+                                   FontSize="13"
+                                   FontFamily="Georgia"
+                                   Foreground="#1B3A14"/>
+                    </DataTemplate>
+                </Setter.Value>
+            </Setter>
         </Style>
 
     </Application.Resources>

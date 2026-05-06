@@ -30,24 +30,21 @@ namespace ZooApp.Views
         {
             if (!BirthDatePicker.SelectedDate.HasValue) return;
             var date = BirthDatePicker.SelectedDate.Value;
-
             if (date > DateTime.Now)
             {
                 MessageBox.Show(
-                    "Дата народження не може бути у майбутньому.",
+                    "Дата народження не може бути в майбутньому.",
                     "Помилка", MessageBoxButton.OK, MessageBoxImage.Warning);
                 BirthDatePicker.SelectedDate = _dto.BirthDate;
                 return;
             }
-
             if (date < new DateTime(1900, 1, 1))
             {
-                MessageBox.Show("Некоректна дата народження (раніше 1900 року).",
+                MessageBox.Show("Некоректна дата (до 1900 р.).",
                     "Помилка", MessageBoxButton.OK, MessageBoxImage.Warning);
                 BirthDatePicker.SelectedDate = _dto.BirthDate;
                 return;
             }
-
             _dto.BirthDate = date;
         }
 
@@ -77,7 +74,7 @@ namespace ZooApp.Views
             if (_savedByButton) { base.OnClosing(e); return; }
 
             var res = MessageBox.Show(
-                "Зберегти зміни в даних тварини?", "Підтвердження",
+                "Зберегти зміни у даних тварини?", "Підтвердження",
                 MessageBoxButton.YesNoCancel, MessageBoxImage.Question);
 
             if (res == MessageBoxResult.Cancel) { e.Cancel = true; return; }

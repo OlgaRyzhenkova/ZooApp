@@ -35,7 +35,7 @@ namespace ZooApp.DTOs
         }
 
         [Range(0, 1_000_000,
-            ErrorMessage = "Вартість прибирання: від 0 до 1 000 000 грн")]
+            ErrorMessage = "Вартість прибирання: від 0 до 1 000 000 грн.")]
         public int CleaningCost
         {
             get => _cleaningCost;
@@ -66,5 +66,22 @@ namespace ZooApp.DTOs
                 room.AddAnimal(a.ToModel());
             return room;
         }
+
+        public void ApplyTo(Room room)
+        {
+            room.RoomType = RoomType;
+            room.Number = Number;
+            room.Size = Size;
+            room.CleaningCost = CleaningCost;
+        }
+
+        public RoomDTO Clone() => new()
+        {
+            RoomType = RoomType,
+            Number = Number,
+            Size = Size,
+            CleaningCost = CleaningCost,
+            Animals = Animals.Select(a => a.Clone()).ToList()
+        };
     }
 }

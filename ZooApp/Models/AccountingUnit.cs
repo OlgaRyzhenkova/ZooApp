@@ -14,7 +14,7 @@ namespace ZooApp.Models
             get => _animal;
             set => _animal = value
                 ?? throw new ArgumentNullException(
-                    nameof(value), "Тварина не може бути відсутньою (null).");
+                    nameof(value), "Тварина не може бути null.");
         }
 
         public DateTime ArrivalDate
@@ -24,13 +24,13 @@ namespace ZooApp.Models
             {
                 if (value > DateTime.Now)
                     throw new ArgumentException(
-                        "Дата прибуття не може бути у майбутньому.");
+                        "Дата надходження не може бути в майбутньому.");
                 _arrivalDate = value;
             }
         }
 
         [Range(0, 1_000_000,
-            ErrorMessage = "Вартість утримання: від 0 до 1 000 000.")]
+            ErrorMessage = "Вартість утримання: від 0 до 1 000 000 грн.")]
         public int KeepingCost
         {
             get => _keepingCost;
@@ -38,10 +38,10 @@ namespace ZooApp.Models
             {
                 if (value < 0)
                     throw new ArgumentException(
-                        "Вартість утримання не може бути від’ємною.");
+                        "Вартість утримання не може бути від'ємною.");
                 if (value > 1_000_000)
                     throw new ArgumentException(
-                        "Вартість утримання: максимум 1 000 000.");
+                        "Вартість утримання: максимум 1 000 000 грн.");
                 _keepingCost = value;
             }
         }
@@ -57,11 +57,11 @@ namespace ZooApp.Models
 
         public override string ToString() =>
             $"{Animal}\n" +
-            $"Дата прибуття: {ArrivalDate:dd.MM.yyyy}, " +
-            $"Вартість утримання: {KeepingCost} грн";
+            $"Дата надходження: {ArrivalDate:dd.MM.yyyy}, " +
+            $"Вартість утримання: {KeepingCost} грн.";
 
         public string ToShortString() =>
             $"{Animal.ToShortString()} | " +
-            $"{ArrivalDate:dd.MM.yyyy} | {KeepingCost} грн";
+            $"{ArrivalDate:dd.MM.yyyy} | {KeepingCost} грн.";
     }
 }
